@@ -17,3 +17,6 @@ Now you will see a list of reasons.  This is a sample data created for you.
 To create a new reason, click on the “Add New Refund Reason” button on the top-right corner of the page.
 In the next page, you will see a form in which you can fill up reason.
 To save the reasons, click on the “Save Refund Reason” button to save.
+
+#How to use
+You can select refund reason when you submit credit memo.
