@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="SR_OrderRefundReason::refundreason_manage" title="Manage Order Refund Reason" module="SR_OrderRefundReason" sortOrder="100" parent="Magento_Sales::sales_operation" action="refundreason/manage/" resource="SR_OrderRefundReason::manage"/>
+    </menu>
+</config>

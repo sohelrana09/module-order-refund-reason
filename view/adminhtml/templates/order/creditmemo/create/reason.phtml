@@ -1,0 +1,16 @@
+<br/>
+<?php
+/** @var $block \SR\OrderRefundReason\Block\Adminhtml\Order\Creditmemo\Create\RefundReason */
+?>
+<label class="normal admin__field-label" for="creditmemo_refund_reason">
+    <span><?php /* @escapeNotVerified */ echo __('Refund Reason') ?></span>
+</label>
+<div class="admin__field-control">
+    <select id="creditmemo_refund_reason" class="admin__control-select" name="creditmemo[refund_reason]">
+        <option value="">--<?php /* @escapeNotVerified */ echo __('Please select reason') ?>--</option>
+        <?php $collection = $block->getAllRefundReason();?>
+        <?php foreach ($collection as $refundReason) :?>
+            <option value="<?php echo $refundReason->getId();?>"><?php echo $refundReason->getOrderRefundReasonTitle();?></option>
+        <?php endforeach;?>
+    </select>
+</div>

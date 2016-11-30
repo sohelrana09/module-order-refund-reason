@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="refundreason_manage_listing_data_source" xsi:type="string">SR\OrderRefundReason\Model\ResourceModel\RefundReason\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="SR\OrderRefundReason\Model\ResourceModel\RefundReason\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">sr_order_refund_reason</argument>
+            <argument name="eventPrefix" xsi:type="string">refund_reason_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">refund_reason_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">SR\OrderRefundReason\Model\ResourceModel\RefundReason</argument>
+        </arguments>
+    </type>
+    <virtualType name="RefundReasonGridDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+        <arguments>
+            <argument name="collection" xsi:type="object" shared="false">SR\OrderRefundReason\Model\ResourceModel\RefundReason\Collection</argument>
+            <argument name="filterPool" xsi:type="object" shared="false">RefundReasonGirdFilterPool</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="RefundReasonGirdFilterPool" type="Magento\Framework\View\Element\UiComponent\DataProvider\FilterPool">
+        <arguments>
+            <argument name="appliers" xsi:type="array">
+                <item name="regular" xsi:type="object">Magento\Framework\View\Element\UiComponent\DataProvider\RegularFilter</item>
+                <item name="fulltext" xsi:type="object">Magento\Framework\View\Element\UiComponent\DataProvider\FulltextFilter</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <preference for="SR\OrderRefundReason\Api\Data\RefundReasonSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
+    <preference for="SR\OrderRefundReason\Api\Data\RefundReasonInterface" type="SR\OrderRefundReason\Model\RefundReason" />
+    <preference for="SR\OrderRefundReason\Api\RefundReasonRepositoryInterface" type="SR\OrderRefundReason\Model\RefundReasonRepository" />
+    <preference for="SR\OrderRefundReason\Api\Data\RefundReasonMappingInterface" type="SR\OrderRefundReason\Model\RefundReasonMapping" />
+    <preference for="SR\OrderRefundReason\Api\RefundReasonMappingRepositoryInterface" type="SR\OrderRefundReason\Model\RefundReasonMappingRepository" />
+</config>
