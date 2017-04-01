@@ -2,7 +2,6 @@
 namespace SR\OrderRefundReason\Model;
 
 use SR\OrderRefundReason\Api\Data\RefundReasonInterface;
-use SR\OrderRefundReason\Model\ResourceModel\RefundReason as ResourceRefundReason;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractModel;
 
@@ -48,9 +47,19 @@ class RefundReason extends AbstractModel implements RefundReasonInterface, Ident
      *
      * @return string|null
      */
-    public function getTitle()
+    public function getOrderRefundReasonTitle()
     {
         return $this->getData(self::TITLE);
+    }
+
+    /**
+     * Is active
+     *
+     * @return bool|null
+     */
+    public function getIsActive()
+    {
+        return $this->getData(self::IS_ACTIVE);
     }
 
     /**
@@ -71,16 +80,6 @@ class RefundReason extends AbstractModel implements RefundReasonInterface, Ident
     public function getCreatedAt()
     {
         return $this->getData(self::CREATED_AT);
-    }
-
-    /**
-     * Is active
-     *
-     * @return bool|null
-     */
-    public function isActive()
-    {
-        return $this->getData(self::IS_ACTIVE);
     }
 
     /**
@@ -106,6 +105,17 @@ class RefundReason extends AbstractModel implements RefundReasonInterface, Ident
     }
 
     /**
+     * Set is active
+     *
+     * @param int|bool $isActive
+     * @return \SR\OrderRefundReason\Api\Data\RefundReasonInterface
+     */
+    public function setIsActive($isActive)
+    {
+        return $this->setData(self::IS_ACTIVE, $isActive);
+    }
+
+    /**
      * Set created At
      *
      * @param string $createdAt
@@ -125,16 +135,5 @@ class RefundReason extends AbstractModel implements RefundReasonInterface, Ident
     public function setUpdatedAt($updatedAt)
     {
         return $this->setData(self::UPDATED_AT, $updatedAt);
-    }
-
-    /**
-     * Set is active
-     *
-     * @param int|bool $isActive
-     * @return \SR\OrderRefundReason\Api\Data\RefundReasonInterface
-     */
-    public function setIsActive($isActive)
-    {
-        return $this->setData(self::IS_ACTIVE, $isActive);
     }
 }

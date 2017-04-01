@@ -6,10 +6,11 @@
             <item name="deps" xsi:type="string">refundreason_edit_form.refundreason_form_data_source</item>
         </item>
         <item name="label" xsi:type="string" translate="true">General Information</item>
-        <item name="layout" xsi:type="array">
-            <item name="type" xsi:type="string">tabs</item>
-            <item name="navContainerName" xsi:type="string">left</item>
+        <item name="config" xsi:type="array">
+            <item name="dataScope" xsi:type="string">data</item>
+            <item name="namespace" xsi:type="string">refundreason_edit_form</item>
         </item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
         <item name="buttons" xsi:type="array">
             <item name="back" xsi:type="string">SR\OrderRefundReason\Block\Adminhtml\RefundReason\Edit\BackButton</item>
             <item name="delete" xsi:type="string">SR\OrderRefundReason\Block\Adminhtml\RefundReason\Edit\DeleteButton</item>
@@ -27,7 +28,6 @@
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="submit_url" xsi:type="url" path="refundreason/manage/save"/>
-                    <item name="validate_url" xsi:type="url" path="refundreason/manage/validate"/>
                 </item>
             </argument>
         </argument>
@@ -43,7 +43,7 @@
                 <item name="label" xsi:type="string" translate="true">Refund Reason Information</item>
             </item>
         </argument>
-        <field name="id">
+        <field name="order_refund_reason_id">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="visible" xsi:type="boolean">false</item>

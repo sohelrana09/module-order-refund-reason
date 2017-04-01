@@ -5,12 +5,11 @@ use SR\OrderRefundReason\Api\Data;
 use SR\OrderRefundReason\Api\RefundReasonRepositoryInterface;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\SortOrder;
-use Magento\Framework\Exception\CouldNotDeleteException;
-use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Reflection\DataObjectProcessor;
 use SR\OrderRefundReason\Model\ResourceModel\RefundReason as ResourceRefundReason;
 use SR\OrderRefundReason\Model\ResourceModel\RefundReason\CollectionFactory as RefundReasonCollectionFactory;
+use Magento\Framework\EntityManager\EntityManager;
 
 class RefundReasonRepository implements RefundReasonRepositoryInterface
 {
@@ -50,9 +49,9 @@ class RefundReasonRepository implements RefundReasonRepositoryInterface
     protected $dataRefundReasonFactory;
 
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface
+     * @var EntityManager
      */
-    private $storeManager;
+    private $entityManager;
 
     /**
      * @param ResourceRefundReason $resource
@@ -62,6 +61,7 @@ class RefundReasonRepository implements RefundReasonRepositoryInterface
      * @param Data\RefundReasonSearchResultsInterfaceFactory $searchResultsFactory
      * @param DataObjectHelper $dataObjectHelper
      * @param DataObjectProcessor $dataObjectProcessor
+     * @param EntityManager $entityManager
      */
     public function __construct(
         ResourceRefundReason $resource,
@@ -70,7 +70,8 @@ class RefundReasonRepository implements RefundReasonRepositoryInterface
         RefundReasonCollectionFactory $refundReasonCollectionFactory,
         Data\RefundReasonSearchResultsInterfaceFactory $searchResultsFactory,
         DataObjectHelper $dataObjectHelper,
-        DataObjectProcessor $dataObjectProcessor
+        DataObjectProcessor $dataObjectProcessor,
+        EntityManager $entityManager
     ) {
         $this->resource = $resource;
         $this->refundReasonFactory = $refundReasonFactory;
@@ -79,52 +80,44 @@ class RefundReasonRepository implements RefundReasonRepositoryInterface
         $this->dataObjectHelper = $dataObjectHelper;
         $this->dataRefundReasonFactory = $dataRefundReasonFactory;
         $this->dataObjectProcessor = $dataObjectProcessor;
+        $this->entityManager = $entityManager;
     }
 
     /**
-     * Save Refund Reason data
-     *
-     * @param \SR\OrderRefundReason\Api\Data\RefundReasonInterface $refundReason
-     * @return $refundReason
-     * @throws CouldNotSaveException
+     * {@inheritdoc}
      */
     public function save(\SR\OrderRefundReason\Api\Data\RefundReasonInterface $refundReason)
     {
-        try {
-            $this->resource->save($refundReason);
-        } catch (\Exception $exception) {
-            throw new CouldNotSaveException(__(
-                'Could not save the Refund Reason: %1',
-                $exception->getMessage()
-            ));
+        /** @var \SR\OrderRefundReason\Model\RefundReason $bannerModel */
+        $refundReasonModel = $this->refundReasonFactory->create();
+        if ($refundReasonId = $refundReason->getId()) {
+            $this->entityManager->load($refundReasonModel, $refundReasonId);
         }
-        return $refundReason;
+
+        $refundReasonModel->addData(
+            $this->dataObjectProcessor->buildOutputDataArray($refundReason, Data\RefundReasonInterface::class)
+        );
+
+        $this->entityManager->save($refundReasonModel);
+        return $refundReasonModel;
     }
 
     /**
-     * Retrieve refund reason.
-     *
-     * @param string $refundReasonId
-     * @return $refundReason
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * {@inheritdoc}
      */
     public function getById($refundReasonId)
     {
-        $refundReason = $this->refundReasonFactory->create();
-        $refundReason->load($refundReasonId);
-        if (!$refundReason->getId()) {
-            throw new NoSuchEntityException(__('Refund Reason with id "%1" does not exist.', $refundReasonId));
+        /** @var \SR\OrderRefundReason\Model\RefundReason $bannerModel */
+        $refundReasonModel = $this->refundReasonFactory->create();
+        $this->entityManager->load($refundReasonModel, $refundReasonId);
+        if (!$refundReasonModel->getId()) {
+            throw NoSuchEntityException::singleField('refundReasonId', $refundReasonId);
         }
-        return $refundReason;
+        return $refundReasonModel;
     }
 
     /**
-     * Retrieve refund reason matching the specified criteria.
-     *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @param \Magento\Framework\Api\SearchCriteriaInterface $criteria
-     * @return \SR\OrderRefundReason\Model\ResourceModel\RefundReason\Collection
+     * {@inheritdoc}
      */
     public function getList(\Magento\Framework\Api\SearchCriteriaInterface $criteria)
     {
@@ -133,11 +126,19 @@ class RefundReasonRepository implements RefundReasonRepositoryInterface
 
         $collection = $this->refundReasonCollectionFactory->create();
         foreach ($criteria->getFilterGroups() as $filterGroup) {
+            $fields = [];
+            $values = [];
             foreach ($filterGroup->getFilters() as $filter) {
-                $condition = $filter->getConditionType() ?: 'eq';
-                $collection->addFieldToFilter($filter->getField(), [$condition => $filter->getValue()]);
+                $conditionType = $filter->getConditionType() ? $filter->getConditionType() : 'eq';
+                $fields[] = [$filter->getField()];
+                $values[] = [ $conditionType => $filter->getValue()];
+            }
+
+            if ($fields) {
+                $collection->addFieldToFilter($fields, $values);
             }
         }
+
         $searchResults->setTotalCount($collection->getSize());
         $sortOrders = $criteria->getSortOrders();
         if ($sortOrders) {
@@ -149,56 +150,34 @@ class RefundReasonRepository implements RefundReasonRepositoryInterface
                 );
             }
         }
+
         $collection->setCurPage($criteria->getCurrentPage());
         $collection->setPageSize($criteria->getPageSize());
-        $refundReasonss = [];
-        /** @var RefundReason $refundReasonModel */
-        foreach ($collection as $refundReasonModel) {
-            $refundReasonData = $this->dataRefundReasonFactory->create();
-            $this->dataObjectHelper->populateWithArray(
-                $refundReasonData,
-                $refundReasonModel->getData(),
-                'SR\OrderRefundReason\Api\Data\RefundReasonInterface'
-            );
-            $refundReasonss[] = $this->dataObjectProcessor->buildOutputDataArray(
-                $refundReasonData,
-                'SR\OrderRefundReason\Api\Data\RefundReasonInterface'
-            );
-        }
-        $searchResults->setItems($refundReasonss);
+        $searchResults->setItems($collection->getItems());
+
         return $searchResults;
     }
 
     /**
-     * Delete refund reason.
-     *
-     * @param \SR\OrderRefundReason\Api\Data\RefundReasonInterface $refundReason
-     * @return bool
-     * @throws CouldNotDeleteException
+     * {@inheritdoc}
      */
     public function delete(\SR\OrderRefundReason\Api\Data\RefundReasonInterface $refundReason)
     {
-        try {
-            $this->resource->delete($refundReason);
-        } catch (\Exception $exception) {
-            throw new CouldNotDeleteException(__(
-                'Could not delete the Refund Reason: %1',
-                $exception->getMessage()
-            ));
-        }
-        return true;
+        return $this->deleteById($refundReason->getId());
     }
 
     /**
-     * Delete refund reason by ID.
-     *
-     * @param string $refundReasonId
-     * @return bool
-     * @throws CouldNotDeleteException
-     * @throws NoSuchEntityException
+     * {@inheritdoc}
      */
     public function deleteById($refundReasonId)
     {
-        return $this->delete($this->getById($refundReasonId));
+        /** @var \SR\OrderRefundReason\Model\RefundReason $bannerModel */
+        $refundReasonModel = $this->refundReasonFactory->create();
+        $this->entityManager->load($refundReasonModel, $refundReasonId);
+        if (!$refundReasonModel->getId()) {
+            throw NoSuchEntityException::singleField('refundReasonId', $refundReasonId);
+        }
+        $this->entityManager->delete($refundReasonModel);
+        return true;
     }
 }

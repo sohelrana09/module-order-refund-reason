@@ -59,9 +59,9 @@ class ControllerActionPostdispatchRefundReasonSave implements ObserverInterface
                 $saveData = [
                     'order_id' => $order_id,
                     'order_refund_reason_id' => $creditmemoData['refund_reason'],
-                    'order_refund_reason_title' => $refundReason->getTitle()
+                    'order_refund_reason_title' => $refundReason->getOrderRefundReasonTitle()
                 ];
-                
+
                 $model = $this->refundReasonMappingFactory->create();
                 $this->dataObjectHelper->populateWithArray($model, $saveData, RefundReasonMappingInterface::class);
                 $this->refundReasonMappingRepository->save($model);

@@ -25,18 +25,18 @@ interface RefundReasonInterface
     public function getId();
 
     /**
-     * Get title
+     * Get Order Refund Reason Title
      *
      * @return string|null
      */
-    public function getTitle();
+    public function getOrderRefundReasonTitle();
 
     /**
-     * Get update time
+     * Is active
      *
-     * @return string|null
+     * @return bool|null
      */
-    public function getUpdatedAt();
+    public function getIsActive();
 
     /**
      * Get Created time
@@ -46,11 +46,11 @@ interface RefundReasonInterface
     public function getCreatedAt();
 
     /**
-     * Is active
+     * Get update time
      *
-     * @return bool|null
+     * @return string|null
      */
-    public function isActive();
+    public function getUpdatedAt();
 
     /**
      * Set ID
@@ -69,6 +69,14 @@ interface RefundReasonInterface
     public function setOrderRefundReasonTitle($title);
 
     /**
+     * Set is active
+     *
+     * @param int|bool $isActive
+     * @return \SR\OrderRefundReason\Api\Data\RefundReasonInterface
+     */
+    public function setIsActive($isActive);
+
+    /**
      * Set created At
      *
      * @param string $createdAt
@@ -83,12 +91,4 @@ interface RefundReasonInterface
      * @return \SR\OrderRefundReason\Api\Data\RefundReasonInterface
      */
     public function setUpdatedAt($updatedAt);
-
-    /**
-     * Set is active
-     *
-     * @param int|bool $isActive
-     * @return \SR\OrderRefundReason\Api\Data\RefundReasonInterface
-     */
-    public function setIsActive($isActive);
 }

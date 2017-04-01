@@ -2,44 +2,59 @@
 namespace SR\OrderRefundReason\Model;
 
 use SR\OrderRefundReason\Api\RefundReasonMappingRepositoryInterface;
-use SR\OrderRefundReason\Api\Data;
-use Magento\Framework\Exception\CouldNotSaveException;
-use SR\OrderRefundReason\Model\ResourceModel\RefundReasonMapping as ResourceRefundReasonMapping;
+use Magento\Framework\EntityManager\EntityManager;
+use \SR\OrderRefundReason\Model\RefundReasonMappingFactory;
+use Magento\Framework\Reflection\DataObjectProcessor;
 
 class RefundReasonMappingRepository implements RefundReasonMappingRepositoryInterface
 {
     /**
-     * @var ResourceRefundReasonMapping
+     * @var EntityManager
      */
-    protected $resource;
+    private $entityManager;
+
 
     /**
-     * @param ResourceRefundReasonMapping $resource
+     * @var RefundReasonMappingFactory
+     */
+    protected $refundReasonMappingFactory;
+
+    /**
+     * @var DataObjectProcessor
+     */
+    protected $dataObjectProcessor;
+
+    /**
+     * @param EntityManager $entityManager
+     * @param RefundReasonMappingFactory $refundReasonMappingFactory
+     * @param DataObjectProcessor $dataObjectProcessor
      */
     public function __construct(
-        ResourceRefundReasonMapping $resource
+        EntityManager $entityManager,
+        RefundReasonMappingFactory $refundReasonMappingFactory,
+        DataObjectProcessor $dataObjectProcessor
     ) {
-        $this->resource = $resource;
+        $this->entityManager = $entityManager;
+        $this->refundReasonMappingFactory = $refundReasonMappingFactory;
+        $this->dataObjectProcessor = $dataObjectProcessor;
     }
 
     /**
-     * Save Refund Reason Mapping data
-     *
-     * @param \SR\OrderRefundReason\Api\Data\RefundReasonMappingInterface $refundReasonMapping
-     * @return $refundReasonMapping
-     * @throws CouldNotSaveException
+     * {@inheritdoc}
      */
     public function save(\SR\OrderRefundReason\Api\Data\RefundReasonMappingInterface $refundReasonMapping)
     {
-        try {
-            $this->resource->save($refundReasonMapping);
-        } catch (\Exception $exception) {
-            throw new CouldNotSaveException(__(
-                'Could not save the Refund Reason: %1',
-                $exception->getMessage()
-            ));
+        /** @var \SR\OrderRefundReason\Model\RefundReason $bannerModel */
+        $refundReasonMappingModel = $this->refundReasonMappingFactory->create();
+        if ($id = $refundReasonMapping->getId()) {
+            $this->entityManager->load($refundReasonMappingModel, $id);
         }
 
-        return $refundReasonMapping;
+        $refundReasonMappingModel->addData(
+            $this->dataObjectProcessor->buildOutputDataArray($refundReasonMapping, \SR\OrderRefundReason\Api\Data\RefundReasonMappingInterface::class)
+        );
+
+        $this->entityManager->save($refundReasonMappingModel);
+        return $refundReasonMappingModel;
     }
 }

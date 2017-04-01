@@ -48,7 +48,7 @@ class RefundReasonMapping extends AbstractModel implements RefundReasonMappingIn
      *
      * @return string|null
      */
-    public function getTitle()
+    public function getOrderRefundReasonTitle()
     {
         return $this->getData(self::REASON_TITLE);
     }

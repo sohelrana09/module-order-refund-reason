@@ -34,4 +34,26 @@
     <preference for="SR\OrderRefundReason\Api\RefundReasonRepositoryInterface" type="SR\OrderRefundReason\Model\RefundReasonRepository" />
     <preference for="SR\OrderRefundReason\Api\Data\RefundReasonMappingInterface" type="SR\OrderRefundReason\Model\RefundReasonMapping" />
     <preference for="SR\OrderRefundReason\Api\RefundReasonMappingRepositoryInterface" type="SR\OrderRefundReason\Model\RefundReasonMappingRepository" />
+    <type name="Magento\Framework\EntityManager\MetadataPool">
+        <arguments>
+            <argument name="metadata" xsi:type="array">
+                <item name="SR\OrderRefundReason\Api\Data\RefundReasonInterface" xsi:type="array">
+                    <item name="entityTableName" xsi:type="string">sr_order_refund_reason</item>
+                    <item name="identifierField" xsi:type="string">order_refund_reason_id</item>
+                </item>
+                <item name="SR\OrderRefundReason\Api\Data\RefundReasonMappingInterface" xsi:type="array">
+                    <item name="entityTableName" xsi:type="string">sr_order_refund_reason_mapping</item>
+                    <item name="identifierField" xsi:type="string">order_refund_reason_mapping_id</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\EntityManager\HydratorPool">
+        <arguments>
+            <argument name="hydrators" xsi:type="array">
+                <item name="SR\OrderRefundReason\Api\Data\RefundReasonInterface" xsi:type="string">Magento\Framework\EntityManager\AbstractModelHydrator</item>
+                <item name="SR\OrderRefundReason\Api\Data\RefundReasonMappingInterface" xsi:type="string">Magento\Framework\EntityManager\AbstractModelHydrator</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

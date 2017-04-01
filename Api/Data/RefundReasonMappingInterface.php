@@ -29,14 +29,7 @@ interface RefundReasonMappingInterface
      *
      * @return string|null
      */
-    public function getTitle();
-
-    /**
-     * Get Created time
-     *
-     * @return string|null
-     */
-    public function getCreatedAt();
+    public function getOrderRefundReasonTitle();
 
     /**
      * Get Order Id
@@ -51,6 +44,13 @@ interface RefundReasonMappingInterface
      * @return int
      */
     public function getOrderRefundReasonId();
+
+    /**
+     * Get Created time
+     *
+     * @return string|null
+     */
+    public function getCreatedAt();
 
     /**
      * Set ID
@@ -69,14 +69,6 @@ interface RefundReasonMappingInterface
     public function setOrderRefundReasonTitle($title);
 
     /**
-     * Set created At
-     *
-     * @param string $createdAt
-     * @return \SR\OrderRefundReason\Api\Data\RefundReasonMappingInterface
-     */
-    public function setCreatedAt($createdAt);
-
-    /**
      * Set Order Id
      *
      * @param int $orderId
@@ -91,4 +83,12 @@ interface RefundReasonMappingInterface
      * @return \SR\OrderRefundReason\Api\Data\RefundReasonMappingInterface
      */
     public function setOrderRefundReasonId($refundReasonId);
+
+    /**
+     * Set created At
+     *
+     * @param string $createdAt
+     * @return \SR\OrderRefundReason\Api\Data\RefundReasonMappingInterface
+     */
+    public function setCreatedAt($createdAt);
 }

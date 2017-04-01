@@ -92,7 +92,7 @@
             <span class="note-list-date"><?php /* @noEscape */ echo $block->formatDate($reason->getCreatedAt(), \IntlDateFormatter::MEDIUM) ?></span>
             <span class="note-list-time"><?php /* @noEscape */ echo $block->formatTime($reason->getCreatedAt(), \IntlDateFormatter::MEDIUM) ?></span>
             <div class="note-list-comment">
-                <?php echo $block->escapeHtml($reason->getTitle(), ['b', 'br', 'strong', 'i', 'u', 'a']) ?>
+                <?php echo $block->escapeHtml($reason->getOrderRefundReasonTitle(), ['b', 'br', 'strong', 'i', 'u', 'a']) ?>
             </div>
         </li>
     <?php endforeach;?>

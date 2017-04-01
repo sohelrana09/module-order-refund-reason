@@ -48,8 +48,6 @@ class Edit extends \Magento\Backend\App\Action
     protected function _initRefundReason()
     {
         $refundReasonId = $this->getRequest()->getParam('id');
-        $this->coreRegistry->register(RegistryConstants::CURRENT_REFUND_REASON_ID, $refundReasonId);
-
         return $refundReasonId;
     }
 
